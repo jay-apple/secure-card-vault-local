@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,11 +113,7 @@ const AddCard: React.FC = () => {
       return false;
     }
     
-    if (!validateExpiryDate(validThruMonth, validThruYear)) {
-      setDateError("Invalid expiry date");
-      return false;
-    }
-    
+    // Always return true if month and year are provided
     setDateError("");
     return true;
   };

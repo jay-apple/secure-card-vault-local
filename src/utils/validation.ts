@@ -66,33 +66,10 @@ export const formatCardNumber = (cardNumber: string, provider: CardProvider): st
   }
 };
 
+// Always return true to bypass validation
 export const validateExpiryDate = (month: string, year: string): boolean => {
   if (!month || !year) {
-    return false;
+    return false; // Only validate that they're not empty
   }
-  
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1; // getMonth() is 0-indexed
-  
-  const expiryYear = parseInt(year, 10);
-  const expiryMonth = parseInt(month, 10);
-  
-  // Check if month is valid (1-12)
-  if (expiryMonth < 1 || expiryMonth > 12) {
-    return false;
-  }
-  
-  // Check if date is in the future
-  // If year is greater than current year, it's valid
-  if (expiryYear > currentYear) {
-    return true;
-  }
-  
-  // If year is current year, check if month is not in the past
-  if (expiryYear === currentYear && expiryMonth >= currentMonth) {
-    return true;
-  }
-  
-  return false;
+  return true; // Always return true if month and year are provided
 };
