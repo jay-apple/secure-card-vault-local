@@ -1,4 +1,3 @@
-
 import { Bank, CardType } from "./types";
 
 // Banks for both countries
@@ -82,6 +81,10 @@ export const cardTypes: CardType[] = [
   { id: "in2_3", name: "HDFC Millennia", bankId: "in2", provider: "Mastercard" },
   { id: "in2_4", name: "HDFC MoneyBack", bankId: "in2", provider: "Mastercard" },
   { id: "in2_5", name: "HDFC Freedom", bankId: "in2", provider: "RuPay" },
+  { id: "in2_6", name: "HDFC Pixel", bankId: "in2", provider: "Visa" },
+  { id: "in2_7", name: "HDFC Infinia", bankId: "in2", provider: "Visa" },
+  { id: "in2_8", name: "HDFC Business", bankId: "in2", provider: "Mastercard" },
+  { id: "in2_9", name: "HDFC LIC", bankId: "in2", provider: "RuPay" },
   
   // ICICI Cards (India)
   { id: "in3_1", name: "ICICI Coral", bankId: "in3", provider: "Mastercard" },
@@ -100,6 +103,21 @@ export const cardTypes: CardType[] = [
   { id: "both1_1", name: "HSBC Cash Back", bankId: "both1", provider: "Visa" },
   { id: "both1_2", name: "HSBC Platinum", bankId: "both1", provider: "Visa" },
   { id: "both1_3", name: "HSBC Premier", bankId: "both1", provider: "Mastercard" },
+  { id: "both1_4", name: "HSBC Smart Value", bankId: "both1", provider: "Visa" },
+  { id: "both1_5", name: "HSBC Advance", bankId: "both1", provider: "Mastercard" },
+  
+  // Standard Chartered Cards (Both)
+  { id: "both2_1", name: "Standard Chartered Manhattan", bankId: "both2", provider: "Mastercard" },
+  { id: "both2_2", name: "Standard Chartered Ultimate", bankId: "both2", provider: "Visa" },
+  { id: "both2_3", name: "Standard Chartered Platinum Rewards", bankId: "both2", provider: "Visa" },
+  { id: "both2_4", name: "Standard Chartered DigiSmart", bankId: "both2", provider: "Mastercard" },
+  { id: "both2_5", name: "Standard Chartered Emirates", bankId: "both2", provider: "Visa" },
+  
+  // Deutsche Bank Cards (Both)
+  { id: "both3_1", name: "Deutsche Bank Global", bankId: "both3", provider: "Mastercard" },
+  { id: "both3_2", name: "Deutsche Bank Platinum", bankId: "both3", provider: "Visa" },
+  { id: "both3_3", name: "Deutsche Bank Miles & More", bankId: "both3", provider: "Mastercard" },
+  { id: "both3_4", name: "Deutsche Bank Wealth", bankId: "both3", provider: "Visa" },
 ];
 
 export const getCardProviders = () => [
