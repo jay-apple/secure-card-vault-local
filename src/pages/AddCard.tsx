@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,8 +19,7 @@ import {
 import { 
   validateCardNumber, 
   validateCVV, 
-  formatCardNumber,
-  validateExpiryDate 
+  formatCardNumber
 } from "@/utils/validation";
 
 const AddCard: React.FC = () => {
@@ -27,16 +27,17 @@ const AddCard: React.FC = () => {
   const [provider, setProvider] = useState<CardProvider | "">("");
   const [bankId, setBankId] = useState("");
   const [cardTypeId, setCardTypeId] = useState("");
+  const [customCardName, setCustomCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [validThruMonth, setValidThruMonth] = useState("");
   const [validThruYear, setValidThruYear] = useState("");
   const [cvv, setCvv] = useState("");
   const [cardNumberError, setCardNumberError] = useState("");
-  const [dateError, setDateError] = useState("");
   const [cvvError, setCvvError] = useState("");
   const [banks, setBanks] = useState<Bank[]>([]);
   const [cardTypes, setCardTypes] = useState<CardType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [customBankName, setCustomBankName] = useState("");
   
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -69,10 +70,18 @@ const AddCard: React.FC = () => {
 
   const handleBankChange = (value: string) => {
     setBankId(value);
+    if (value === "custom") {
+      setCustomBankName("");
+    }
   };
 
   const handleCardTypeChange = (value: string) => {
     setCardTypeId(value);
+    
+    if (value === "custom_card") {
+      setCustomCardName("");
+      return;
+    }
     
     // Find selected card type
     const selectedCardType = cardTypes.find(ct => ct.id === value);
@@ -104,17 +113,6 @@ const AddCard: React.FC = () => {
       return false;
     }
     
-    return true;
-  };
-
-  const handleValidateDates = () => {
-    if (!validThruMonth || !validThruYear) {
-      setDateError("Expiry date is required");
-      return false;
-    }
-    
-    // Always return true if month and year are provided
-    setDateError("");
     return true;
   };
 
@@ -150,6 +148,14 @@ const AddCard: React.FC = () => {
           });
           return;
         }
+        if (bankId === "custom" && !customBankName.trim()) {
+          toast({
+            title: "Error",
+            description: "Please enter bank name",
+            variant: "destructive",
+          });
+          return;
+        }
         setStep(3);
         break;
       case 3:
@@ -157,6 +163,14 @@ const AddCard: React.FC = () => {
           toast({
             title: "Error",
             description: "Please select a card type",
+            variant: "destructive",
+          });
+          return;
+        }
+        if (cardTypeId === "custom_card" && !customCardName.trim()) {
+          toast({
+            title: "Error",
+            description: "Please enter card name",
             variant: "destructive",
           });
           return;
@@ -170,7 +184,12 @@ const AddCard: React.FC = () => {
         setStep(5);
         break;
       case 5:
-        if (!handleValidateDates()) {
+        if (!validThruMonth || !validThruYear) {
+          toast({
+            title: "Error",
+            description: "Please select expiry month and year",
+            variant: "destructive",
+          });
           return;
         }
         setStep(6);
@@ -203,16 +222,6 @@ const AddCard: React.FC = () => {
       const selectedCardType = cardTypes.find(ct => ct.id === cardTypeId);
       const selectedBank = banks.find(b => b.id === bankId);
       
-      if (!selectedCardType || !selectedBank) {
-        toast({
-          title: "Error",
-          description: "Card type or bank not found",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
-      
       // Create a new card object
       const newCard: CreditCard = {
         id: Date.now().toString(),
@@ -226,10 +235,10 @@ const AddCard: React.FC = () => {
           year: validThruYear
         },
         cvv,
-        cardType: selectedCardType.id,
-        provider: selectedCardType.provider,
-        bank: selectedBank.name,
-        cardName: selectedCardType.name
+        cardType: cardTypeId,
+        provider: provider as CardProvider,
+        bank: bankId === "custom" ? customBankName : (selectedBank ? selectedBank.name : "Unknown Bank"),
+        cardName: cardTypeId === "custom_card" ? customCardName : (selectedCardType ? selectedCardType.name : "Unknown Card")
       };
       
       // Save the card
@@ -290,6 +299,19 @@ const AddCard: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
+              
+              {bankId === "custom" && (
+                <div className="mt-4">
+                  <Label htmlFor="customBank">Bank Name</Label>
+                  <Input
+                    id="customBank"
+                    placeholder="Enter bank name"
+                    className="w-full p-4 mt-2"
+                    value={customBankName}
+                    onChange={(e) => setCustomBankName(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
         );
@@ -311,6 +333,19 @@ const AddCard: React.FC = () => {
                   ))}
                 </SelectContent>
               </Select>
+              
+              {cardTypeId === "custom_card" && (
+                <div className="mt-4">
+                  <Label htmlFor="customCardName">Card Name</Label>
+                  <Input
+                    id="customCardName"
+                    placeholder="Enter card name"
+                    className="w-full p-4 mt-2"
+                    value={customCardName}
+                    onChange={(e) => setCustomCardName(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           </div>
         );
@@ -380,9 +415,6 @@ const AddCard: React.FC = () => {
                   </Select>
                 </div>
               </div>
-              {dateError && (
-                <p className="text-red-500 text-sm mt-1">{dateError}</p>
-              )}
             </div>
           </div>
         );
