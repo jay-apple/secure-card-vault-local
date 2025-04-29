@@ -29,8 +29,6 @@ const AddCard: React.FC = () => {
   const [bankId, setBankId] = useState("");
   const [cardTypeId, setCardTypeId] = useState("");
   const [cardNumber, setCardNumber] = useState("");
-  const [validFromMonth, setValidFromMonth] = useState("");
-  const [validFromYear, setValidFromYear] = useState("");
   const [validThruMonth, setValidThruMonth] = useState("");
   const [validThruYear, setValidThruYear] = useState("");
   const [cvv, setCvv] = useState("");
@@ -111,8 +109,8 @@ const AddCard: React.FC = () => {
   };
 
   const handleValidateDates = () => {
-    if (!validFromMonth || !validFromYear || !validThruMonth || !validThruYear) {
-      setDateError("All date fields are required");
+    if (!validThruMonth || !validThruYear) {
+      setDateError("Expiry date is required");
       return false;
     }
     
@@ -121,6 +119,7 @@ const AddCard: React.FC = () => {
       return false;
     }
     
+    setDateError("");
     return true;
   };
 
@@ -130,6 +129,7 @@ const AddCard: React.FC = () => {
       return false;
     }
     
+    setCvvError("");
     return true;
   };
 
@@ -223,8 +223,8 @@ const AddCard: React.FC = () => {
         id: Date.now().toString(),
         cardNumber,
         validFrom: {
-          month: validFromMonth,
-          year: validFromYear
+          month: "01", // Default value since we're not collecting this anymore
+          year: new Date().getFullYear().toString()
         },
         validThru: {
           month: validThruMonth,
@@ -339,7 +339,11 @@ const AddCard: React.FC = () => {
                 <p className="text-red-500 text-sm mt-1">{cardNumberError}</p>
               )}
               <p className="text-sm text-gray-500 mt-2">
-                For {provider} cards, enter a {provider === "American Express" ? "15" : "16"}-digit number
+                For {provider} cards, enter {provider === "American Express" 
+                  ? "15" 
+                  : provider === "Diners Club" 
+                    ? "14" 
+                    : "16"}-digit number
               </p>
             </div>
           </div>
@@ -347,41 +351,7 @@ const AddCard: React.FC = () => {
       case 5:
         return (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-vault-secondary">Enter Card Validity</h2>
-            
-            <div>
-              <Label>Valid From</Label>
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div>
-                  <Select value={validFromMonth} onValueChange={setValidFromMonth}>
-                    <SelectTrigger className="w-full p-4">
-                      <SelectValue placeholder="Month" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getMonths().map((month) => (
-                        <SelectItem key={`from-month-${month}`} value={month}>
-                          {month}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Select value={validFromYear} onValueChange={setValidFromYear}>
-                    <SelectTrigger className="w-full p-4">
-                      <SelectValue placeholder="Year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getYears().map((year) => (
-                        <SelectItem key={`from-year-${year}`} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <h2 className="text-xl font-semibold text-vault-secondary">Enter Card Expiry</h2>
             
             <div>
               <Label>Valid Thru</Label>

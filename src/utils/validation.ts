@@ -23,7 +23,7 @@ export const validateCardNumber = (cardNumber: string, provider: CardProvider): 
     case "RuPay":
       return normalized.length === 16 && /^6[0-9]/.test(normalized);
     case "Diners Club":
-      return (normalized.length === 14 || normalized.length === 16) && /^3(?:0[0-5]|[68])/.test(normalized);
+      return normalized.length === 14 && /^3(?:0[0-5]|[68])/.test(normalized);
     case "JCB":
       return normalized.length === 16 && /^35/.test(normalized);
     case "Custom":
@@ -67,6 +67,10 @@ export const formatCardNumber = (cardNumber: string, provider: CardProvider): st
 };
 
 export const validateExpiryDate = (month: string, year: string): boolean => {
+  if (!month || !year) {
+    return false;
+  }
+  
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1; // getMonth() is 0-indexed
@@ -79,15 +83,16 @@ export const validateExpiryDate = (month: string, year: string): boolean => {
     return false;
   }
   
-  // Check if year is valid (not in the past)
-  if (expiryYear < currentYear) {
-    return false;
+  // Check if date is in the future
+  // If year is greater than current year, it's valid
+  if (expiryYear > currentYear) {
+    return true;
   }
   
   // If year is current year, check if month is not in the past
-  if (expiryYear === currentYear && expiryMonth < currentMonth) {
-    return false;
+  if (expiryYear === currentYear && expiryMonth >= currentMonth) {
+    return true;
   }
   
-  return true;
+  return false;
 };
